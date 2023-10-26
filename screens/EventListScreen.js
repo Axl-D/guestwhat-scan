@@ -3,6 +3,7 @@ import { View, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { Icon, Text, ListItem, Button } from "react-native-elements";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { getApiBaseUrl } from "../functions/apiEndPointHelper";
 
 const EventListScreen = ({ navigation }) => {
   const [events, setEvents] = useState([]);
@@ -22,13 +23,14 @@ const EventListScreen = ({ navigation }) => {
 
   useEffect(() => {
     const fetchEvents = async () => {
+      const baseUrl = await getApiBaseUrl();
       const token = await AsyncStorage.getItem("userToken");
       const config = {
         headers: { Authorization: `Bearer ${token}` },
       };
 
       axios
-        .get("https://guestwhat.co/version-test/api/1.1/wf/get-events", config)
+        .get(baseUrl + "api/1.1/wf/get-events", config)
         .then((response) => {
           //console.log(response.data.response.events);
           setEvents(response.data.response.events);
@@ -107,20 +109,13 @@ const EventListScreen = ({ navigation }) => {
       <Text h4 style={styles.title}>
         List of Events
       </Text>
-      <FlatList
-        style={styles.list}
-        data={events}
-        renderItem={renderEventItem}
-        keyExtractor={(item) => item._id.toString()}
-      />
+      <FlatList style={styles.list} data={events} renderItem={renderEventItem} keyExtractor={(item) => item._id.toString()} />
       <Text h4 style={styles.title}>
         List of Accesses
       </Text>
       <FlatList data={accesses} renderItem={renderAccessItem} keyExtractor={(item) => item._id.toString()} />
 
-      {selectedAccesses.length > 0 && (
-        <Button title="Fetch Participants" onPress={goToList} containerStyle={styles.buttonContainer} />
-      )}
+      {selectedAccesses.length > 0 && <Button title="Fetch Participants" onPress={goToList} containerStyle={styles.buttonContainer} />}
     </View>
   );
 };
@@ -146,4 +141,3 @@ const styles = StyleSheet.create({
 });
 
 export default EventListScreen;
-``;

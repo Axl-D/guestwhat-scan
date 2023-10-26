@@ -4,16 +4,18 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ParticipantsList from "./ParticipantsList";
 import QRCodeReader from "./QRCodeReader";
+import { getApiBaseUrl } from "../functions/apiEndPointHelper";
 
 // Tab Navigator
 const BottomTab = createBottomTabNavigator();
 
-const QRAndParticipantsScreen = ({ route }) => {
+const QRAndParticipantsScreen = async ({ route }) => {
   const { selectedAccesses, guestlists } = route.params;
   const [participants, setParticipants] = useState([]);
+  const baseUrl = await getApiBaseUrl();
 
   const buildURL = (quotedArrayString) => {
-    const base = "https://guestwhat.co/version-test/api/1.1/obj/Guest?cursor=0&constraints=";
+    const base = baseUrl + "api/1.1/obj/Guest?cursor=0&constraints=";
     const constraints = [
       { key: "status", constraint_type: "equals", value: "confirmée" },
       { key: "access", constraint_type: "in", value: `[${quotedArrayString}]` },
@@ -53,10 +55,7 @@ const QRAndParticipantsScreen = ({ route }) => {
 
   return (
     <BottomTab.Navigator initialRouteName="Participants">
-      <BottomTab.Screen
-        name="Participants"
-        children={() => <ParticipantsList participants={participants} selectedAccesses={selectedAccesses} />}
-      />
+      <BottomTab.Screen name="Participants" children={() => <ParticipantsList participants={participants} selectedAccesses={selectedAccesses} />} />
       <BottomTab.Screen name="QRCode" children={() => <QRCodeReader participants={participants} />} />
     </BottomTab.Navigator>
   );

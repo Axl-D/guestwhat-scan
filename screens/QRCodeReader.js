@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
-import SlideInPopUp from "./SlideInPopUp";
+import SlideInPopUp from "../components/SlideInPopUp";
 
 export default function QRCodeReader({ participants }) {
   const [hasPermission, setHasPermission] = useState(null);
